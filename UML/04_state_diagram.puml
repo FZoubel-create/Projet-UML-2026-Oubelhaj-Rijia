@@ -1,0 +1,36 @@
+@startuml
+title Diagrammes d'états – Centre de Formation Continue (CFC)
+
+/' =========================
+    Cycle de vie FORMATION
+    ========================= '/
+
+state "Formation\nLifecycle" as FormationLifecycle {
+
+  [*] --> Brouillon : Création\n(Creation)
+  Brouillon --> Publiee : Publier\n(Publish)
+  Publiee --> Archivee : Archiver\n(Archive)
+  Archivee --> [*]
+
+}
+
+/' =========================
+    Cycle de vie INSCRIPTION
+    ========================= '/
+
+state "Inscription\nLifecycle" as InscriptionLifecycle {
+
+  [*] --> Preinscription : Préinscription\n(Pre-registration)
+  Preinscription --> DossierSoumis : Dépôt dossier\n(Submit file)
+  DossierSoumis --> EnValidation : En cours de validation\n(Under review)
+
+  EnValidation --> Acceptee : Acceptée\n(Accepted)
+  EnValidation --> Refusee : Refusée\n(Rejected)
+
+  Acceptee --> Inscrit : Inscription finale\n(Final registration)
+  Refusee --> [*]
+  Inscrit --> [*]
+
+}
+
+@enduml

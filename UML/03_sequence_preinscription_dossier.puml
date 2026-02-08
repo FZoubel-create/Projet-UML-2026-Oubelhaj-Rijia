@@ -1,0 +1,37 @@
+@startuml
+title Séquence — Préinscription et soumission de dossier (CFC)
+
+actor Candidat
+participant "Application Web CFC" as App
+participant "Service Formation" as FormationService
+participant "Service Inscription" as InscriptionService
+participant "Service Notification" as NotificationService
+
+== Consultation du catalogue ==
+Candidat -> App : Consulter catalogue
+App -> FormationService : getFormationsPubliees()
+FormationService --> App : Liste des formations
+App --> Candidat : Affichage catalogue
+
+== Préinscription ==
+Candidat -> App : Se préinscrire
+App -> FormationService : verifierFormationPubliee()
+FormationService --> App : OK
+
+App -> InscriptionService : verifierPeriodeInscription()
+InscriptionService --> App : Période ouverte
+
+App -> InscriptionService : creerPreinscription()
+InscriptionService --> App : Préinscription créée
+
+== Soumission du dossier ==
+Candidat -> App : Soumettre dossier
+App -> InscriptionService : enregistrerDossier()
+InscriptionService --> App : Dossier enregistré
+
+App -> NotificationService : notifierAdminEtablissement()
+NotificationService --> App : Notification envoyée
+
+App --> Candidat : Confirmation de soumission
+
+@enduml

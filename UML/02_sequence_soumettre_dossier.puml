@@ -1,0 +1,13 @@
+@startuml
+actor Candidat
+participant "Interface Web" as UI
+participant "Système CFC" as System
+participant "Base de données" as DB
+
+Candidat -> UI : Remplir formulaire d’inscription
+UI -> System : Envoyer données du dossier
+System -> DB : Enregistrer dossier
+DB --> System : Confirmation enregistrement
+System --> UI : Confirmation soumission
+UI --> Candidat : Dossier soumis avec succès
+@enduml

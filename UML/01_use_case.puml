@@ -1,0 +1,28 @@
+@startuml
+left to right direction
+
+actor "Super Admin" as SA
+actor "Admin Etablissement" as AE
+actor "Coordinateur" as CO
+actor "Candidat" as CA
+
+rectangle "Système CFC" {
+
+  SA -- (Gérer établissements)
+  SA -- (Gérer Admins Etablissement)
+  SA -- (Configurer paramètres globaux)
+  SA -- (Consulter reporting global)
+
+  AE -- (Valider Dossier)
+  AE -- (Refuser Dossier)
+
+  CO -- (Définir dates inscription)
+  CO -- (Ouvrir inscriptions)
+  CO -- (Fermer inscriptions)
+
+  CA -- (Consulter catalogue)
+  CA -- (Se préinscrire)
+  CA -- (Soumettre dossier)
+  CA -- (Suivre statut inscription)
+}
+@enduml

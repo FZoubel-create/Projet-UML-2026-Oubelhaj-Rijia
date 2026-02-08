@@ -1,0 +1,45 @@
+@startuml
+title Diagramme de classes - Système CFC
+
+class Utilisateur {
+  +id: int
+  +nom: String
+  +email: String
+  +motDePasse: String
+}
+
+class SuperAdmin
+class AdminEtablissement
+class Coordinateur
+class Candidat
+
+Utilisateur <|-- SuperAdmin
+Utilisateur <|-- AdminEtablissement
+Utilisateur <|-- Coordinateur
+Utilisateur <|-- Candidat
+
+class Etablissement {
+  +id: int
+  +nom: String
+  +adresse: String
+}
+
+class Dossier {
+  +id: int
+  +dateSoumission: Date
+  +statut: String
+}
+
+class Inscription {
+  +id: int
+  +dateInscription: Date
+  +etat: String
+}
+
+Etablissement "1" -- "0..*" AdminEtablissement
+Candidat "1" -- "0..*" Dossier
+Candidat "1" -- "0..*" Inscription
+Coordinateur "1" -- "1" Etablissement
+
+@enduml
+

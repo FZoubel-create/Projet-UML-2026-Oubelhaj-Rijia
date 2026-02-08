@@ -1,0 +1,44 @@
+@startuml
+title Séquence A — Ouverture des inscriptions par le Coordinateur
+
+actor Coordinateur
+participant "Portail\nSystème" as Système
+database "Base de données\nInscriptions" as BD
+participant "Service de\nNotification" as Notification
+
+Coordinateur -> Système: Se connecter (identifiants)
+activate Système
+Système -> BD: Vérifier identifiants
+activate BD
+BD --> Système: Résultat d'authentification
+deactivate BD
+
+alt Authentification échoue
+    Système --> Coordinateur: Afficher erreur d'authentification
+    deactivate Système
+else Authentification réussie
+    Système --> Coordinateur: Afficher tableau de bord
+    Coordinateur -> Système: Demande d'ouverture des inscriptions\n(dates, règles)
+    Système -> BD: Vérifier droits du coordinateur
+    activate BD
+    BD --> Système: Droits confirmés
+    deactivate BD
+
+    opt Validation des paramètres
+        Système -> Système: Valider dates et contraintes
+    end
+
+    Système -> BD: Mettre à jour état = "Ouvert"\nEnregistrer période et paramètres
+    activate BD
+    BD --> Système: Confirmation sauvegarde
+    deactivate BD
+
+    Système -> Notification: Notifier étudiants (optionnel)
+    activate Notification
+    Notification --> Système: Accusé de réception envoi
+    deactivate Notification
+
+    Système --> Coordinateur: Confirmation : inscriptions ouvertes
+end
+deactivate Système
+@enduml

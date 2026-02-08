@@ -1,0 +1,22 @@
+@startuml
+title Séquence D — Fermeture automatique des inscriptions (Job planifié)
+
+participant "Job Planifié (Scheduler)" as Job
+participant "Application CFC" as App
+participant "Formation" as F
+participant "Service Notification" as N
+
+Job -> App : Déclenchement automatique (date atteinte)
+App -> F : Vérifier date_fermeture_inscription
+
+alt Date courante > date_fermeture
+    App -> F : Désactiver inscriptions
+    F --> App : Inscriptions fermées
+
+    App -> N : Envoyer notification de fermeture
+    N --> App : Notifications envoyées
+else Date non atteinte
+    App --> Job : Aucune action
+end
+
+@enduml
