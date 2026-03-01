@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="max-width: 500px; margin-top: 2rem;">
+    <div class="card">
+        <div class="card-body">
+            <div class="section-title">
+                <h2>Connexion</h2>
+                <p>Accédez à votre espace personnel.</p>
+            </div>
+
+            <form method="POST" action="{{ url_for('auth.login') }}">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Email Académique</label>
+                    <input type="email" name="email" required class="form-control"
+                        style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Mot de passe</label>
+                    <input type="password" name="password" required
+                        style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Se Connecter</button>
+            </form>
+
+            <p class="text-center" style="margin-top: 1.5rem; font-size: 0.9rem;">
+                Pas encore de compte ? <a href="{{ url_for('auth.register') }}" class="text-accent"
+                    style="font-weight: 600;">Créer un compte candidat</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

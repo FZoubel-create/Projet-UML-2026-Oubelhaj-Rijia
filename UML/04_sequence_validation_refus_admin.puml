@@ -1,0 +1,44 @@
+@startuml
+title Séquence C – Validation / Refus d'un dossier par l'Admin (CFC)
+
+actor "Admin d'établissement" as Admin
+participant "Application Web CFC" as App
+participant "Service Inscription" as InscriptionService
+database "Base de données" as DB
+participant "Service Notification" as NotificationService
+
+Admin -> App : Consulter dossiers en attente
+App -> InscriptionService : getDossiersEnAttente()
+InscriptionService -> DB : Lire dossiers
+DB --> InscriptionService : Liste dossiers
+InscriptionService --> App : Liste dossiers
+App --> Admin : Afficher dossiers
+
+Admin -> App : Consulter détail du dossier
+App -> InscriptionService : getDossier(id)
+InscriptionService -> DB : Lire dossier
+DB --> InscriptionService : Dossier
+InscriptionService --> App : Dossier
+App --> Admin : Afficher détail
+
+alt Dossier validé
+    Admin -> App : Valider dossier
+    App -> InscriptionService : validerDossier(id)
+    InscriptionService -> DB : MAJ état = Accepté
+    DB --> InscriptionService : Confirmation
+    InscriptionService -> NotificationService : notifierAcceptation(id)
+    NotificationService --> InscriptionService : Notification envoyée
+    InscriptionService --> App : Succès
+    App --> Admin : Confirmation validation
+else Dossier refusé
+    Admin -> App : Refuser dossier
+    App -> InscriptionService : refuserDossier(id)
+    InscriptionService -> DB : MAJ état = Refusé
+    DB --> InscriptionService : Confirmation
+    InscriptionService -> NotificationService : notifierRefus(id)
+    NotificationService --> InscriptionService : Notification envoyée
+    InscriptionService --> App : Succès
+    App --> Admin : Confirmation refus
+end
+
+@enduml

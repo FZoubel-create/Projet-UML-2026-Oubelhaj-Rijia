@@ -1,0 +1,138 @@
+@startuml ClassDiagram_Domain
+' --- Configuration ---
+skinparam class {
+    BackgroundColor White
+    ArrowColor #2C3E50
+    BorderColor #2C3E50
+}
+skinparam linetype ortho
+
+' --- Enumérations (États Métier) ---
+enum EtatFormation {
+    BROUILLON
+    PUBLIEE
+    ARCHIVEE
+}
+
+enum EtatInscription {
+    PREINSCRIT
+    DOSSIER_SOUMIS
+    EN_VALIDATION
+    ACCEPTE
+    REFUSE
+    INSCRIT_FINAL
+}
+
+enum RoleUtilisateur {
+    SUPER_ADMIN
+    ADMIN_ETABLISSEMENT
+    COORDINATEUR
+    CANDIDAT
+}
+
+' --- Entités ---
+
+class Utilisateur {
+    + id : Long
+    + email : String {unique}
+    + motDePasseHash : String
+    + nom : String
+    + prenom : String
+    + dateCreation : DateTime
+    + estActif : Boolean
+    + roles : List<RoleUtilisateur>
+    ' Méthodes
+    + seConnecter()
+    + modifierProfil()
+}
+
+class Etablissement {
+    + id : Long
+    + nom : String
+    + code : String {unique}
+    + adresse : String
+    + logoUrl : String
+    + telephone : String
+}
+
+class Formation {
+    + id : Long
+    + codeReference : String {unique}
+    + titre : String
+    + description : Text
+    + fraisInscription : Decimal
+    + dureeMois : Integer
+    ' Gestion du cycle de vie
+    + etat : EtatFormation
+    ' Gestion des périodes d'inscription
+    + dateOuvertureInscription : DateTime
+    + dateFermetureInscription : DateTime
+    + inscriptionsOuvertes : Boolean
+    ' Méthodes
+    + estOuverte() : Boolean
+    + publier()
+    + fermerInscriptions()
+}
+
+class Inscription {
+    + id : Long
+    + datePreinscription : DateTime
+    + dateSoumission : DateTime
+    + etat : EtatInscription
+    + commentaireAdmin : Text
+    ' Méthodes
+    + soumettreDossier()
+    + valider()
+    + refuser()
+}
+
+class Dossier {
+    + id : Long
+    + cvUrl : String
+    + lettreMotivationUrl : String
+    + diplomeUrl : String
+    + cinUrl : String
+    + estComplet : Boolean
+}
+
+class ParametreGlobal {
+    + cle : String {unique}
+    + valeur : String
+    ' Exemple : ANNEE_UNIV_COURANTE = "2023-2024"
+}
+
+' --- Relations ---
+
+' Un admin gère un Etablissement (1 Admin -> 1 Etab, simplifié pour l'admin d'etab, 
+' mais un Etab peut avoir plusieurs admins)
+Etablissement "1" -- "1..*" Utilisateur : "admins (Staff)"
+
+' Une Formation appartient à UN Etablissement
+Etablissement "1" *-- "0..*" Formation : "propose"
+
+' Coordinateur responsable de formations
+Utilisateur "0..*" -- "0..*" Formation : "coordonne"
+
+' Le Candidat fait une Inscription
+Utilisateur "1" -- "0..*" Inscription : "candidat"
+
+' Une Inscription concerne UNE Formation
+Formation "1" -- "0..*" Inscription : "reçoit"
+
+' Une Inscription possède UN Dossier (Composition forte)
+Inscription "1" *-- "1" Dossier : "contient"
+
+' --- Notes Explicatives ---
+note bottom of Formation
+    Règle Métier :
+    Une formation n'est visible que si 
+    etat == PUBLIEE
+end note
+
+note right of Inscription
+    Table de liaison enrichie
+    entre Candidat et Formation
+    avec gestion d'état.
+end note
+
+@enduml

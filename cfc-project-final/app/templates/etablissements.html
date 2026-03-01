@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-light min-vh-100 py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h6 class="text-primary fw-bold text-uppercase">Réseau USMS</h6>
+            <h2 class="fw-bold mb-3">Nos Établissements</h2>
+            <p class="text-muted w-75 mx-auto">Le Centre de Formation Continue s'appuie sur l'excellence académique des
+                établissements de l'Université Sultan Moulay Slimane.</p>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for etab in etablissements %}
+            <div class="col">
+                <div class="card border-0 shadow-hover h-100 text-center p-4">
+                    <div class="card-body">
+                        <div class="mb-4 d-inline-block p-3 rounded-circle bg-light">
+                            <!-- Mock Icon based on name -->
+                            {% if 'FST' in etab.code %}
+                            <i class="bi bi-cpu text-primary fs-1"></i>
+                            {% elif 'ENCG' in etab.code %}
+                            <i class="bi bi-graph-up-arrow text-success fs-1"></i>
+                            {% elif 'EST' in etab.code %}
+                            <i class="bi bi-tools text-warning fs-1"></i>
+                            {% elif 'FLSH' in etab.code %}
+                            <i class="bi bi-book text-danger fs-1"></i>
+                            {% else %}
+                            <i class="bi bi-building text-primary fs-1"></i>
+                            {% endif %}
+                        </div>
+
+                        <h4 class="fw-bold mb-2">{{ etab.code }}</h4>
+                        <h6 class="text-muted mb-3 small">{{ etab.nom }}</h6>
+
+                        <p class="text-secondary small mb-4">
+                            Un pôle d'excellence offrant des formations spécialisées adaptées aux besoins du marché
+                            local et national.
+                        </p>
+
+                        <a href="{{ url_for('main.catalogue', etablissement_id=etab.id) }}"
+                            class="btn btn-outline-primary rounded-pill px-4">
+                            Voir les formations <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                    <div class="card-footer bg-white border-0 pt-0 pb-3">
+                        <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>Béni Mellal</small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .shadow-hover:hover {
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+        box-shadow: 0 1rem 3rem rgba(0, 0, 0, .175) !important;
+    }
+</style>
+{% endblock %}

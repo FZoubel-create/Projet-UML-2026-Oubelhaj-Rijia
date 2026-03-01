@@ -1,0 +1,47 @@
+@startuml State_Inscription
+skinparam state {
+    BackgroundColor White
+    BorderColor #2C3E50
+    ArrowColor #2C3E50
+    AttributeFontColor #2C3E50
+}
+
+title Cycle de Vie d'une Inscription (Workflow)
+
+[*] --> PREINSCRIT : Le candidat remplit\nle formulaire initial
+PREINSCRIT : Données de base saisies\n(Nom, Email, Choix)
+
+PREINSCRIT --> DOSSIER_SOUMIS : Le candidat finalise\nl'upload des pièces
+DOSSIER_SOUMIS : En attente de traitement\npar l'administration
+
+DOSSIER_SOUMIS --> EN_VALIDATION : L'admin ouvre le dossier\npour instruction
+EN_VALIDATION : Vérification des pièces\n(Diplômes, CIN)
+
+state Decision <<Choice>>
+
+EN_VALIDATION --> Decision : L'admin tranche
+
+Decision --> ACCEPTE : Dossier Conforme\n& Critères OK
+ACCEPTE : Candidat retenu\nEn attente paiement/finalisation
+
+Decision --> REFUSE : Dossier Incomplet\nou Critères KO
+REFUSE : Fin du processus
+
+ACCEPTE --> INSCRIT : Paiement effectué\n& Inscription Administrative
+INSCRIT : Étudiant officiel
+
+REFUSE --> [*]
+INSCRIT --> [*]
+
+note right of DOSSIER_SOUMIS
+    Tant que l'état est PREINSCRIT
+    le candidat peut modifier
+    son dossier.
+end note
+
+note right of EN_VALIDATION
+    À ce stade, le dossier est verrouillé
+    pour le candidat.
+end note
+
+@enduml

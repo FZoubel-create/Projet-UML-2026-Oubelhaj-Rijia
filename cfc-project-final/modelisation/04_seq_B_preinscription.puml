@@ -1,0 +1,46 @@
+@startuml Seq_B_Preinscription
+skinparam responseMessageBelowArrow true
+actor "Candidat" as candy
+participant "Frontend" as front
+participant "InscriptionController" as ctrl
+participant "FormationService" as srvForm
+participant "InscriptionService" as srvInsc
+database "DB" as db
+
+title Séquence B : Le Candidat se préinscrit
+
+candy -> front : Clic "Postuler" (idFormation)
+front -> ctrl : POST /inscriptions/create {idFormation}
+activate ctrl
+
+ctrl -> srvForm : checkEligibilite(idFormation)
+activate srvForm
+srvForm -> db : getFormation(id)
+db --> srvForm : formation
+srvForm -> srvForm : 1. Est Publiée ?\n2. Inscriptions Ouvertes ?\n3. DateJour <= DateFermeture ?
+
+alt Éligible
+    srvForm --> ctrl : OK
+    deactivate srvForm
+    
+    ctrl -> srvInsc : creerPreinscription(user, formation)
+    activate srvInsc
+    srvInsc -> srvInsc : Vérifier si déjà inscrit ?
+    
+    srvInsc -> db : save(new Inscription(PREINSCRIT))
+    activate db
+    db --> srvInsc : id_inscription
+    deactivate db
+    
+    srvInsc --> ctrl : Inscription créée
+    deactivate srvInsc
+    
+    ctrl --> front : HTTP 201 Created (Redirection Dossier)
+    front --> candy : Afficher formulaire "Compléter Dossier"
+else Non Éligible
+    srvForm --> ctrl : Erreur (Fermé ou Archivé)
+    ctrl --> front : HTTP 400 "Inscriptions closes"
+end
+
+deactivate ctrl
+@enduml

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{% if formation %}Modifier{% else %}Créer{% endif %} une Formation</h2>
+    <form method="POST">
+        <div class="mb-3">
+            <label class="form-label">Titre</label>
+            <input type="text" name="titre" class="form-control" value="{{ formation.titre if formation else '' }}"
+                required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control"
+                rows="5">{{ formation.description if formation else '' }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Établissement</label>
+            <select name="etablissement_id" class="form-select">
+                {% for etab in etablissements %}
+                <option value="{{ etab.id }}" {% if formation and formation.etablissement_id==etab.id %}selected{% endif
+                    %}>{{ etab.nom }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="row mb-4 bg-light p-3 rounded border mx-0">
+            <h6 class="text-primary"><i class="bi bi-calendar-event me-2"></i>Période d'Inscription (Optionnel)</h6>
+            <div class="col-md-6">
+                <label class="form-label">Date Ouverture</label>
+                <input type="date" name="date_ouverture" class="form-control"
+                    value="{{ formation.date_ouverture.strftime('%Y-%m-%d') if formation and formation.date_ouverture else '' }}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Date Fermeture</label>
+                <input type="date" name="date_fermeture" class="form-control"
+                    value="{{ formation.date_fermeture.strftime('%Y-%m-%d') if formation and formation.date_fermeture else '' }}">
+            </div>
+            <div class="form-text mt-2">Ces dates définissent quand les étudiants peuvent postuler.</div>
+        </div>
+        <button type="submit" class="btn btn-primary">{% if formation %}Mettre à jour{% else %}Enregistrer Brouillon{%
+            endif %}</button>
+    </form>
+</div>
+{% endblock %}

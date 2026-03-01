@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="mb-0 fw-bold"><i class="bi bi-megaphone-fill me-2"></i>Communication Candidats</h4>
+                    <small>{{ formation.titre }}</small>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Destinataires</label>
+                            <select name="target_status" class="form-select form-select-lg">
+                                <option value="PRESELECTIONNE">Candidats Présélectionnés ({{ count_preselect }}) - pour
+                                    Convocations</option>
+                                <option value="LISTE_ATTENTE">Liste d'Attente ({{ count_waitlist }})</option>
+                                <option value="ACCEPTE">Admis Définitifs ({{ count_admis }})</option>
+                                <option value="ALL">Tous les Inscrits (Info Générale)</option>
+                            </select>
+                            <div class="form-text">Sélectionnez le groupe cible pour cette communication.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Sujet de l'email</label>
+                            <input type="text" name="subject" class="form-control"
+                                placeholder="ex: Convocation au test écrit..." required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Message</label>
+                            <textarea name="message" class="form-control" rows="8" placeholder="Bonjour, ..."
+                                required></textarea>
+                            <div class="form-text">Ce message sera envoyé individuellement à chaque candidat.</div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('formations.manage') }}" class="btn btn-outline-secondary">Annuler</a>
+                            <button type="submit" class="btn btn-primary px-4"><i
+                                    class="bi bi-send-fill me-2"></i>Envoyer la campagne</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

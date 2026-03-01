@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- PREMIUM STYLES FOR HOMEPAGE ONLY -->
+<style>
+    /* Hero Section */
+    .hero-premium {
+        position: relative;
+        height: 85vh;
+        min-height: 600px;
+        background: url("{{ url_for('static', filename='images/hero_campus_bg.png') }}") no-repeat center center/cover;
+        display: flex;
+        align-items: center;
+        color: white;
+        overflow: hidden;
+    }
+
+    .hero-premium::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(10, 25, 47, 0.95) 0%, rgba(10, 25, 47, 0.7) 100%);
+        z-index: 1;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-title-lg {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 800;
+        font-size: 3.5rem;
+        line-height: 1.2;
+        margin-bottom: 1.5rem;
+        background: -webkit-linear-gradient(45deg, #ffffff, #a5b4fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* Stats Bar */
+    .stats-bar {
+        position: relative;
+        z-index: 3;
+        margin-top: -80px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 3rem;
+    }
+
+    .stat-item h3 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #0d6efd;
+    }
+
+    /* Program Cards */
+    .program-card {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.4s ease;
+        background: white;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .program-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .program-img {
+        height: 200px;
+        object-fit: cover;
+    }
+
+    /* Testimonials */
+    .testimonial-slide {
+        background: #f8f9fa;
+        border-radius: 20px;
+        padding: 3rem;
+        text-align: center;
+    }
+
+    .quote-icon {
+        font-size: 3rem;
+        color: #0d6efd;
+        opacity: 0.2;
+    }
+
+    /* Floating Shapes */
+    .shape {
+        position: absolute;
+        filter: blur(50px);
+        z-index: 0;
+    }
+
+    .shape-1 {
+        top: 20%;
+        left: 10%;
+        width: 300px;
+        height: 300px;
+        background: rgba(13, 110, 253, 0.2);
+        border-radius: 50%;
+    }
+
+    .shape-2 {
+        bottom: 10%;
+        right: 10%;
+        width: 400px;
+        height: 400px;
+        background: rgba(111, 66, 193, 0.2);
+        border-radius: 50%;
+    }
+</style>
+
+<!-- HERO SECTION -->
+<div class="hero-premium">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="container hero-content">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <span class="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill fw-bold">Admission 2026
+                    Ouverte</span>
+                <h1 class="hero-title-lg">Façonnez Votre Avenir<br>avec Excellence</h1>
+                <p class="lead mb-4 text-white-50 fs-5" style="max-width: 600px;">
+                    Rejoignez une communauté universitaire de classe mondiale. Formation continue, masters spécialisés
+                    et doctorats adaptés aux défis de demain.
+                </p>
+                <div class="d-flex gap-3">
+                    <a href="{{ url_for('main.catalogue') }}"
+                        class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-lg">
+                        Explorer les Programmes
+                    </a>
+                    <a href="#video-tour" class="btn btn-outline-light btn-lg rounded-pill px-4 py-3">
+                        <i class="bi bi-play-circle me-2"></i>Visite Virtuelle
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- STATS BAR -->
+<div class="container mb-5">
+    <div class="stats-bar">
+        <div class="row text-center g-4">
+            <div class="col-md-3 border-end">
+                <div class="stat-item">
+                    <h3 class="display-5">13</h3>
+                    <p class="text-uppercase text-muted fw-bold small">Établissements</p>
+                </div>
+            </div>
+            <div class="col-md-3 border-end">
+                <div class="stat-item">
+                    <h3 class="display-5">250+</h3>
+                    <p class="text-uppercase text-muted fw-bold small">Formations</p>
+                </div>
+            </div>
+            <div class="col-md-3 border-end">
+                <div class="stat-item">
+                    <h3 class="display-5">92%</h3>
+                    <p class="text-uppercase text-muted fw-bold small">Insertion Pro.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-item">
+                    <h3 class="display-5">50k+</h3>
+                    <p class="text-uppercase text-muted fw-bold small">Alumni</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FEATURED PROGRAMS -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <small class="text-primary fw-bold text-uppercase letter-spacing-2">Notre Catalogue</small>
+            <h2 class="fw-bold mt-2 display-6">Programmes d'Excellence</h2>
+        </div>
+
+        <div class="row g-4">
+            {% for formation in formations[:3] %}
+            <div class="col-lg-4 col-md-6">
+                <div class="program-card h-100 d-flex flex-column">
+                    <div class="position-relative">
+                        <img src="{{ url_for('static', filename='images/' + formation.image) }}"
+                            class="w-100 program-img" alt="{{ formation.titre }}">
+                        <span class="position-absolute top-0 end-0 m-3 badge bg-white text-dark shadow-sm">{{
+                            formation.etablissement.code }}</span>
+                    </div>
+                    <div class="p-4 d-flex flex-column flex-grow-1">
+                        <small class="text-primary fw-bold mb-2">{{ formation.categorie }}</small>
+                        <h4 class="h5 fw-bold mb-3">{{ formation.titre }}</h4>
+                        <p class="text-muted small mb-4">{{ formation.description[:100] }}...</p>
+
+                        <div class="mt-auto d-flex justify-content-between align-items-center">
+                            <a href="{{ url_for('main.detail', id=formation.id) }}"
+                                class="text-dark fw-bold text-decoration-none">
+                                En savoir plus <i class="bi bi-arrow-right ms-1 text-primary"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="{{ url_for('main.catalogue') }}" class="btn btn-outline-dark rounded-pill px-5">Voir tout le
+                catalogue</a>
+        </div>
+    </div>
+</section>
+
+<!-- NOS ETABLISSEMENTS -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="text-center mb-5">
+            <small class="text-primary fw-bold text-uppercase letter-spacing-2">Nos Partenaires</small>
+            <h2 class="fw-bold mt-2 display-6">Nos Établissements</h2>
+        </div>
+        <div class="row justify-content-center g-4">
+            <!-- Note: We can't easily loop over establishments here without passing them from the route. 
+                  However, usually index route passes 'formations'. 
+                  To be safe and avoid backend changes if possible, I will hardcode the 3 main ones or check if I need to update routes/public.py.
+                  Wait, looking at the user request "non copie vraiment les établissements", I should probably pass them dynamically.
+                  Let's check routes/public.py first. If not passed, I'll update the route.
+                  For now, I'll assume they are NOT passed and update the route in next step.
+                  Actually, I will check the route content first to be sure.
+                  But for this specific replacement, I will stick to fixing the formation images first and then I will check route.
+             -->
+            {% for etab in etablissements[:3] %}
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 text-center p-3">
+                    <div class="card-img-top mx-auto mb-3"
+                        style="height: 120px; width: 120px; overflow: hidden; border-radius: 50%;">
+                        <img src="{{ url_for('static', filename='images/' + etab.image) }}" alt="{{ etab.nom }}"
+                            class="w-100 h-100 object-fit-cover">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">{{ etab.code }}</h5>
+                        <p class="card-text text-muted small">{{ etab.nom }}</p>
+                        <a href="{{ url_for('main.catalogue', etablissement_id=etab.id) }}"
+                            class="btn btn-outline-primary btn-sm rounded-pill">Voir Formations</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- WHY CHOOSE US -->
+<section class="py-5 bg-light position-relative overflow-hidden">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-5 mb-5 mb-lg-0">
+                <h2 class="display-6 fw-bold mb-4">Pourquoi Choisir l'USMS ?</h2>
+                <div class="d-flex mb-4">
+                    <div class="flex-shrink-0">
+                        <div class="rounded-circle bg-primary text-white p-3 d-flex align-items-center justify-content-center"
+                            style="width: 60px; height: 60px;">
+                            <i class="bi bi-award fs-3"></i>
+                        </div>
+                    </div>
+                    <div class="ms-4">
+                        <h5>Accréditation Internationale</h5>
+                        <p class="text-muted">Nos diplômes sont reconnus mondialement et ouvrent les portes des plus
+                            grandes entreprises.</p>
+                    </div>
+                </div>
+                <div class="d-flex mb-4">
+                    <div class="flex-shrink-0">
+                        <div class="rounded-circle bg-success text-white p-3 d-flex align-items-center justify-content-center"
+                            style="width: 60px; height: 60px;">
+                            <i class="bi bi-laptop fs-3"></i>
+                        </div>
+                    </div>
+                    <div class="ms-4">
+                        <h5>Formation Hybride</h5>
+                        <p class="text-muted">Flexibilité totale avec nos cursus alliant présentiel et e-learning de
+                            pointe.</p>
+                    </div>
+                </div>
+                <a href="#" class="btn btn-primary rounded-pill px-4 mt-2">Découvrir l'Université</a>
+            </div>
+            <div class="col-lg-6 offset-lg-1">
+                <div class="position-relative">
+                    <div class="rounded-3 overflow-hidden shadow-lg p-2 bg-white transform-rotate">
+                        <img src="{{ url_for('static', filename='images/hero_campus_bg.png') }}"
+                            class="img-fluid rounded-3" alt="Campus">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="py-5">
+    <div class="container py-5">
+        <h2 class="text-center fw-bold mb-5">Ce qu'en disent nos étudiants</h2>
+        <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="testimonial-slide">
+                                <i class="bi bi-quote quote-icon"></i>
+                                <p class="lead fst-italic mb-4">"Une expérience transformatrice. La qualité des
+                                    intervenants m'a permis de décrocher un poste de cadre en moins de 6 mois après mon
+                                    master."</p>
+                                <h5 class="fw-bold mb-0">Sarah El Mansouri</h5>
+                                <small class="text-muted">Master Big Data, Promo 2024</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Slide 2 -->
+                <div class="carousel-item">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="testimonial-slide">
+                                <i class="bi bi-quote quote-icon"></i>
+                                <p class="lead fst-italic mb-4">"L'accompagnement pédagogique est exceptionnel. On se
+                                    sent vraiment soutenu tout au long du cursus."</p>
+                                <h5 class="fw-bold mb-0">Karim Bennani</h5>
+                                <small class="text-muted">Licence Pro Gestion, Promo 2023</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel"
+                data-bs-slide="prev">
+                <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel"
+                data-bs-slide="next">
+                <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="py-5 bg-primary text-white text-center">
+    <div class="container py-4">
+        <h2 class="fw-bold mb-3">Prêt à commencer votre voyage ?</h2>
+        <p class="lead mb-4 text-white-50">Les candidatures sont ouvertes pour la session d'automne. Ne manquez pas
+            votre chance.</p>
+        <a href="{{ url_for('auth.register') }}"
+            class="btn btn-light btn-lg rounded-pill px-5 fw-bold text-primary shadow">Créer mon Compte Candidat</a>
+    </div>
+</section>
+
+{% endblock %}

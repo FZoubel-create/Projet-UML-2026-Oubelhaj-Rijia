@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Gestion des Formations</h2>
+    <a href="{{ url_for('formations.create') }}" class="btn btn-primary mb-3">Nouvelle Formation</a>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Titre</th>
+                <th>État</th>
+                <th>Ouverture Inscr.</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for f in formations %}
+            <tr>
+                <td>{{ f.id }}</td>
+                <td>{{ f.titre }}</td>
+                <td>
+                    <span class="badge {{ 'bg-success' if f.etat.value == 'PUBLIEE' else 'bg-secondary' }}">
+                        {{ f.etat.value }}
+                    </span>
+                </td>
+                <td>
+                    {% if f.est_ouverte() %}
+                    <span class="badge bg-success">Ouvertes</span>
+                    {% else %}
+                    <span class="badge bg-danger">Fermées</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if f.etat.value == 'BROUILLON' %}
+                    <form action="{{ url_for('formations.publish', id=f.id) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-success">Publier</button>
+                    </form>
+                    {% endif %}
+
+                    {% if f.etat.value == 'PUBLIEE' %}
+                    <form action="{{ url_for('formations.open_inscriptions', id=f.id) }}" method="POST"
+                        style="display:inline;">
+                        <input type="date" name="date_ouverture" required>
+                        <input type="date" name="date_fermeture" required>
+                        <button type="submit" class="btn btn-sm btn-warning">Ouvrir Inscr.</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

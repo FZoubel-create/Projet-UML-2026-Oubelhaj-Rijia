@@ -1,0 +1,38 @@
+@startuml State_Formation
+skinparam state {
+    BackgroundColor White
+    BorderColor #2C3E50
+    ArrowColor #2C3E50
+}
+
+title Cycle de Vie d'une Formation
+
+[*] --> BROUILLON : Création par Admin
+BROUILLON : Configuration initiale\n(Prix, Description)\nInvisible aux candidats
+
+BROUILLON --> PUBLIEE : Action "Publier"
+PUBLIEE : Visible sur le catalogue
+
+state PUBLIEE {
+    [*] --> PERIODE_FERMEE
+    
+    PERIODE_FERMEE : Inscriptions Closes
+    PERIODE_FERMEE --> PERIODE_OUVERTE : Date Début atteinte\nOU Action Coordinateur
+    
+    PERIODE_OUVERTE : Inscriptions Possibles
+    PERIODE_OUVERTE --> PERIODE_FERMEE : Date Fin atteinte\nOU Action Manuel
+}
+
+PUBLIEE --> BROUILLON : Dé-publication\n(Pour correction)
+PUBLIEE --> ARCHIVEE : Fin de promo\nou fermeture définitive
+
+ARCHIVEE : Historique seulement\nLecture seule
+ARCHIVEE --> [*]
+
+note right of PERIODE_OUVERTE
+    C'est le seul état où
+    un candidat peut
+    créer une Inscription.
+end note
+
+@enduml

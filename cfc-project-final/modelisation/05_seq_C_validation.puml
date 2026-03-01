@@ -1,0 +1,43 @@
+@startuml Seq_C_ValidationDossier
+skinparam responseMessageBelowArrow true
+actor "Admin Établissement" as admin
+participant "Vue Admin" as view
+participant "InscriptionController" as ctrl
+participant "InscriptionService" as service
+participant "ServiceNotification" as notif
+database "DB" as db
+
+title Séquence C : Validation d'un Dossier
+
+admin -> view : Consulter liste dossiers "En Validation"
+view -> ctrl : GET /inscriptions?statut=EN_VALIDATION
+ctrl --> view : Liste JSON
+
+admin -> view : Sélectionne un candidat -> "Valider"
+view -> ctrl : PUT /inscriptions/{id}/decision {status: ACCEPTE}
+activate ctrl
+
+ctrl -> service : traiterDecision(id, ACCEPTE, motif=null)
+activate service
+
+service -> db : findById(id)
+service -> service : Vérifier état actuel (doit être EN_VALIDATION)
+service -> service : setEtat(ACCEPTE)
+
+service -> db : save(inscription)
+activate db
+db --> service : OK
+deactivate db
+
+service -> notif : envoyerEmailResultat(candidat, "Félicitations")
+activate notif
+notif --> service : Email envoyé
+deactivate notif
+
+service --> ctrl : Succès
+deactivate service
+
+ctrl --> view : HTTP 200 OK + Mise à jour liste
+view --> admin : Toast "Candidat accepté !"
+
+@enduml

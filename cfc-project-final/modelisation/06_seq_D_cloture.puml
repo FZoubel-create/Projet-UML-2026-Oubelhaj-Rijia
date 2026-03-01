@@ -1,0 +1,30 @@
+@startuml Seq_D_ClotureAuto
+skinparam responseMessageBelowArrow true
+actor "Cron Job (Système)" as cron
+participant "BatchService" as batch
+participant "FormationService" as service
+database "DB" as db
+
+title Séquence D : Fermeture Automatique (Job de Nuit)
+
+cron -> batch : executeBatchCloture() (Chaque nuit 00:00)
+activate batch
+
+batch -> db : findFormationsByCriteria(\n  inscriptionsOuvertes=TRUE \n  AND dateFermeture < NOW\n)
+activate db
+db --> batch : Liste<Formation> [F1, F2...]
+deactivate db
+
+loop Pour chaque Formation F
+    batch -> service : forcerFermeture(F)
+    activate service
+    service -> service : F.setInscriptionsOuvertes(FALSE)
+    service -> db : save(F)
+    service -> service : Log("Fermeture auto de F.id")
+    deactivate service
+end
+
+batch --> cron : Rapport d'exécution (X formations fermées)
+deactivate batch
+
+@enduml

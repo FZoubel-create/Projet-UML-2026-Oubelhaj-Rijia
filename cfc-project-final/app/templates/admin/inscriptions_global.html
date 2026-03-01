@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-4">
+        <h1>BUREAU D'ADMISSION GLOBAL</h1>
+        <p class="lead text-muted">Vue d'ensemble de toutes les candidatures universitaires.</p>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-dark text-white">
+                    <tr>
+                        <th class="ps-3">Candidat</th>
+                        <th>Formation</th>
+                        <th>Établissement</th>
+                        <th>Date</th>
+                        <th>Statut</th>
+                        <th>Dossier</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for inscr in inscriptions %}
+                    <tr>
+                        <td class="ps-3">
+                            <div class="fw-bold">{{ inscr.candidat.nom }} {{ inscr.candidat.prenom }}</div>
+                            <small class="text-white-50">{{ inscr.candidat.email }}</small>
+                        </td>
+                        <td>{{ inscr.formation.titre }}</td>
+                        <td><span class="badge bg-light text-dark border">{{ inscr.formation.etablissement.code
+                                }}</span></td>
+                        <td>{{ inscr.date_creation.strftime('%d/%m/%Y') }}</td>
+                        <td>
+                            {% if inscr.etat.name == 'ACCEPTE' %}
+                            <span class="badge bg-success">Admis</span>
+                            {% elif inscr.etat.name == 'REFUSE' %}
+                            <span class="badge bg-danger">Refusé</span>
+                            {% elif inscr.etat.name == 'PREINSCRIT' %}
+                            <span class="badge bg-secondary">Pré-inscrit</span>
+                            {% else %}
+                            <span class="badge bg-warning text-dark">En Traitement</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if inscr.dossier.cv_filename %}
+                            <a href="{{ url_for('static', filename='uploads/' + inscr.dossier.cv_filename) }}"
+                                target="_blank" class="btn btn-sm btn-outline-info">
+                                <i class="bi bi-eye"></i> Voir
+                            </a>
+                            {% else %}
+                            <span class="text-muted small">-</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

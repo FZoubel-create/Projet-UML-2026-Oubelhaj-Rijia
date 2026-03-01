@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-light min-vh-100 pb-5">
+    <div class="py-5 mb-5 position-relative overflow-hidden"
+        style="background: linear-gradient(135deg, #0a192f 0%, #112d4e 100%); color: white;">
+        <div class="position-absolute top-0 end-0 p-3 opacity-10">
+            <i class="bi bi-gear-wide-connected" style="font-size: 15rem; transform: rotate(30deg);"></i>
+        </div>
+        <div class="container position-relative z-1 d-flex justify-content-between align-items-center">
+            <div>
+                <div class="d-flex align-items-center mb-2">
+                    <span class="badge bg-warning text-dark rounded-pill px-3 py-1 fw-bold me-2">MODE GOD</span>
+                    <small class="text-white-50 letter-spacing-2 text-uppercase fw-bold">Système Central</small>
+                </div>
+                <h1 class="display-4 fw-black mb-0"
+                    style="font-weight: 800; letter-spacing: -1px; background: -webkit-linear-gradient(45deg, #ffffff, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    Tour de Contrôle</h1>
+                <p class="lead text-white-50 mt-2 mb-0" style="max-width: 500px;">Supervision globale du parc
+                    universitaire. Gérez les établissements, les flux et les accès en temps réel.</p>
+            </div>
+            <div class="d-none d-md-block text-end">
+                <div
+                    class="bg-white bg-opacity-10 backdrop-blur-md rounded-4 p-3 border border-white border-opacity-10 text-center">
+                    <span class="d-block display-6 fw-bold">{{ stats.users_count + stats.etablissements_count +
+                        stats.formations_count }}</span>
+                    <small class="text-white-50 text-uppercase" style="font-size: 0.7rem;">Entités Actives</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+
+        <!-- Quick Actions Toolbar -->
+        <div class="card border-0 shadow-sm mb-5">
+            <div class="card-body p-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Actions Rapides
+                </h5>
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('admin.manage_etablissements') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-buildings-fill me-2"></i>Gérer Établissements
+                    </a>
+                    <a href="{{ url_for('admin.manage_users') }}" class="btn btn-outline-dark">
+                        <i class="bi bi-people me-2"></i>Gérer Utilisateurs
+                    </a>
+                    <a href="{{ url_for('admin.all_inscriptions') }}" class="btn btn-success">
+                        <i class="bi bi-file-earmark-text me-2"></i>Toutes les Candidatures
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm h-100 border-start border-4 border-primary">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase small">Utilisateurs</h6>
+                        <h2 class="fw-bold text-dark">{{ stats.users_count }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm h-100 border-start border-4 border-success">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase small">Établissements</h6>
+                        <h2 class="fw-bold text-dark">{{ stats.etablissements_count }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm h-100 border-start border-4 border-warning">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase small">Formations</h6>
+                        <h2 class="fw-bold text-dark">{{ stats.formations_count }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm h-100 border-start border-4 border-info">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase small">Inscriptions</h6>
+                        <h2 class="fw-bold text-dark">{{ stats.inscriptions_count }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Liste des Etablissements -->
+            <div class="col-lg-6">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-header bg-white py-3 fw-bold border-bottom">
+                        <i class="bi bi-building me-2 text-primary"></i>Établissements Actifs
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for etab in etablissements %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                            <div>
+                                <h6 class="mb-0 fw-bold">{{ etab.code }}</h6>
+                                <small class="text-muted">{{ etab.nom }}</small>
+                            </div>
+                            <span class="badge bg-light text-dark border">{{ etab.formations|length }} Formations</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Derniers Users -->
+            <div class="col-lg-6">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-header bg-white py-3 fw-bold border-bottom">
+                        <i class="bi bi-people me-2 text-primary"></i>Derniers Inscrits
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Rôle</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                <tr>
+                                    <td>{{ user.email }}</td>
+                                    <td><span class="badge bg-secondary">{{ user.role.value }}</span></td>
+                                    <td class="small text-muted">{{ user.date_creation.strftime('%d/%m/%Y') }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-light min-vh-100 pb-5">
+    <div class="bg-white border-bottom py-5 mb-5 shadow-sm">
+        <div class="container">
+            <h6 class="text-uppercase text-info letter-spacing-2">Coordination Pédagogique</h6>
+            <h1 class="fw-bold">Gestion des Sessions</h1>
+            <p class="lead mb-0 text-muted">Ouverture et fermeture des inscriptions pour vos filières.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        {% if formations %}
+        <div class="row row-cols-1 row-cols-lg-2 g-4">
+            {% for formation in formations %}
+            <div class="col">
+                <div class="card border-0 shadow-sm h-100">
+                    <div
+                        class="card-header bg-white py-3 fw-bold border-bottom d-flex justify-content-between align-items-center">
+                        {{ formation.titre }}
+                        <div>
+                            {% if formation.est_ouverte() %}
+                            <span class="badge bg-success me-2"><i class="bi bi-unlock-fill me-1"></i>Ouvert</span>
+                            <form action="{{ url_for('formations.close_inscriptions', id=formation.id) }}" method="POST"
+                                class="d-inline" onsubmit="return confirm('Clôturer la session ?');">
+                                <button type="submit" class="btn btn-xs btn-outline-danger rounded-pill"
+                                    style="font-size: 0.7rem;">Fermer</button>
+                            </form>
+                            {% else %}
+                            <span class="badge bg-secondary"><i class="bi bi-lock-fill me-1"></i>Fermé</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="alert alert-light border small mb-4">
+                            <i class="bi bi-info-circle me-1 text-primary"></i>
+                            Période actuelle :
+                            <strong>
+                                {% if formation.date_ouverture %}
+                                {{ formation.date_ouverture.strftime('%d/%m/%Y') }} au {{
+                                formation.date_fermeture.strftime('%d/%m/%Y') }}
+                                {% else %}
+                                Non définie
+                                {% endif %}
+                            </strong>
+                        </div>
+
+                        <form action="{{ url_for('formations.open_inscriptions', id=formation.id) }}" method="POST">
+                            <h6 class="fw-bold mb-3 small text-uppercase text-muted">Mettre à jour la période</h6>
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <label class="form-label small">Date Ouverture</label>
+                                    <input type="date" name="date_ouverture" class="form-control" required>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small">Date Fermeture</label>
+                                    <input type="date" name="date_fermeture" class="form-control" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-calendar-check me-2"></i>Appliquer & Ouvrir
+                            </button>
+                        </form>
+                    </div>
+                    <div class="card-footer bg-light border-0 small text-muted">
+                        Établissement : {{ formation.etablissement.nom }}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-folder-x display-1 text-muted opacity-25"></i>
+            <h3 class="mt-3 text-muted">Aucune formation assignée</h3>
+            <p>Vous n'avez pas encore été désigné comme coordinateur pour une formation.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

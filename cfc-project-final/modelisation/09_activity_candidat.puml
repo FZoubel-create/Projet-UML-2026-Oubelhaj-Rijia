@@ -1,0 +1,64 @@
+@startuml Activity_Candidat
+skinparam activity {
+    BackgroundColor White
+    BorderColor #2C3E50
+    ArrowColor #2C3E50
+}
+
+title Diagramme d'Activités : Parcours de Candidature
+
+start
+:Arrivée sur le portail CFC;
+
+:Recherche une formation;
+
+if (Formation trouvée ?) then (oui)
+    :Consulter détails formation;
+    
+    if (Formation Publiée ?) then (oui)
+        if (Période Inscription Ouverte ?) then (oui)
+            :Clic sur "Postuler";
+            
+            if (Utilisateur connecté ?) then (non)
+                :Créer compte / Login;
+            endif
+            
+            :Accès formulaire préinscription;
+            
+            repeat
+                :Remplir infos personnelles;
+                :Uploader pièces jointes (PDF);
+            repeat while (Dossier incomplet ?) is (oui)
+            
+            :Soumettre Dossier;
+            note right
+                Passage état:
+                DOSSIER_SOUMIS
+            end note
+            
+            :Attendre validation Admin;
+            
+            if (Décision Admin ?) then (Accepté)
+                :Recevoir Email Confirmation;
+                :Payer frais inscription;
+                :Validation Finale;
+                stop
+            else (Refusé)
+                :Recevoir Email Refus;
+                stop
+            endif
+            
+        else (non)
+            :Afficher "Inscriptions Closes";
+            stop
+        endif
+    else (non)
+        :Afficher "Formation Indisponible";
+        stop
+    endif
+else (non)
+    :Afficher "Aucun résultat";
+    stop
+endif
+
+@enduml

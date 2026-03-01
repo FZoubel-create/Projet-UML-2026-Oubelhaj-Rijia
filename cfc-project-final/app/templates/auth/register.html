@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; margin-top: 2rem;">
+    <div class="card">
+        <div class="card-body">
+            <div class="section-title">
+                <h2>Candidature</h2>
+                <p>Rejoignez l'excellence. Créez votre compte candidat.</p>
+            </div>
+
+            <form method="POST" action="{{ url_for('auth.register') }}">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem;">Prénom</label>
+                        <input type="text" name="prenom" required
+                            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem;">Nom</label>
+                        <input type="text" name="nom" required
+                            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px;">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem;">Email</label>
+                    <input type="email" name="email" required
+                        style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem;">Mot de passe</label>
+                    <input type="password" name="password" required
+                        style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px;">
+                    <small style="color: #666;">Au moins 8 caractères.</small>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Créer mon compte</button>
+            </form>
+
+            <p class="text-center" style="margin-top: 1.5rem; font-size: 0.9rem;">
+                Déjà inscrit ? <a href="{{ url_for('auth.login') }}" class="text-accent">Se connecter</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

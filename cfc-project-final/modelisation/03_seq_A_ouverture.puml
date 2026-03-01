@@ -1,0 +1,47 @@
+@startuml Seq_A_OuvrirInscriptions
+skinparam responseMessageBelowArrow true
+actor "Coordinateur" as coord
+participant "Frontend (Vue)" as front
+participant "FormationController" as ctrl
+participant "FormationService" as service
+database "Base de Données" as db
+
+title Séquence A : Le Coordinateur ouvre les inscriptions
+
+coord -> front : Clic "Ouvrir les inscriptions" (idFormation)
+front -> ctrl : POST /formations/{id}/open
+activate ctrl
+
+ctrl -> service : ouvrirInscriptions(idFormation, dates)
+activate service
+
+service -> db : findById(idFormation)
+activate db
+db --> service : formation
+deactivate db
+
+service -> service : Vérifier Droits(User == Coordinateur)
+
+alt Droit OK
+    service -> service : Verifier Etat == PUBLIEE
+    alt Etat OK
+        service -> service : setDateOuverture(now)\nsetDateFermeture(futur)\nsetOuvert(true)
+        service -> db : save(formation)
+        activate db
+        db --> service : confirmation
+        deactivate db
+        service --> ctrl : Succès
+        ctrl --> front : HTTP 200 OK "Inscriptions Ouvertes"
+        front --> coord : Afficher "Succès"
+    else Etat != PUBLIEE
+        service --> ctrl : Erreur "Formation non publiée"
+        ctrl --> front : HTTP 400 Bad Request
+    end
+else Droit NOK
+    service --> ctrl : Erreur "Accès Refusé"
+    ctrl --> front : HTTP 403 Forbidden
+end
+
+deactivate service
+deactivate ctrl
+@enduml

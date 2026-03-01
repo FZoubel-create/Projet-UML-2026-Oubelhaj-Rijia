@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-light min-vh-100 pb-5">
+    <!-- Hero Dashboard -->
+    <div class="bg-white border-bottom shadow-sm mb-4">
+        <div class="container py-4">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h5 class="text-uppercase text-muted small fw-bold mb-1">Espace Candidat</h5>
+                    <h1 class="fw-bold text-primary mb-0">Bonjour, {{ current_user.nom }} {{ current_user.prenom }}</h1>
+                    <p class="text-secondary mt-2 mb-0">Gérez vos candidatures et suivez votre parcours académique.</p>
+                </div>
+                <div class="col-md-4 text-end d-none d-md-block">
+                    <a href="{{ url_for('main.catalogue') }}" class="btn btn-outline-primary rounded-pill px-4">
+                        <i class="bi bi-plus-lg me-2"></i>Nouvelle Candidature
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Stats Cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100"
+                    style="border-left: 4px solid var(--primary-color) !important;">
+                    <div class="card-body p-4 d-flex align-items-center">
+                        <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                            <i class="bi bi-folder2-open text-primary fs-3"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-1">Candidatures Totales</h6>
+                            <h2 class="fw-bold mb-0">{{ stats.total }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100"
+                    style="border-left: 4px solid var(--secondary-color) !important;">
+                    <div class="card-body p-4 d-flex align-items-center">
+                        <div class="bg-warning bg-opacity-10 p-3 rounded-circle me-3">
+                            <i class="bi bi-hourglass-split text-warning fs-3"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-1">En Cours de Traitement</h6>
+                            <h2 class="fw-bold mb-0">{{ stats.pending }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #198754 !important;">
+                    <div class="card-body p-4 d-flex align-items-center">
+                        <div class="bg-success bg-opacity-10 p-3 rounded-circle me-3">
+                            <i class="bi bi-check-lg text-success fs-3"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-1">Admissions</h6>
+                            <h2 class="fw-bold mb-0">{{ stats.accepted }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold text-dark">Mes Candidatures</h4>
+                    <span class="badge bg-light text-dark border">{{ stats.total }} dossiers</span>
+                </div>
+
+                {% if inscriptions %}
+                <div class="d-flex flex-column gap-3">
+                    {% for insc in inscriptions %}
+                    <div class="card border-0 shadow-hover transition-all overflow-hidden">
+                        <div class="card-body p-0">
+                            <div class="row g-0">
+                                <!-- Image Section -->
+                                <div
+                                    class="col-md-2 bg-light d-none d-md-flex align-items-center justify-content-center">
+                                    {% if insc.formation.image %}
+                                    <img src="{{ url_for('static', filename='images/' + insc.formation.image) }}"
+                                        alt="Formation" class="img-fluid"
+                                        style="height: 100%; object-fit: cover; opacity: 0.9;">
+                                    {% else %}
+                                    <i class="bi bi-mortarboard fs-1 text-secondary"></i>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Info Section -->
+                                <div class="col-md-10 p-4">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <span class="badge bg-primary bg-opacity-10 text-primary mb-2">{{
+                                                insc.formation.categorie or 'Formation' }}</span>
+                                            <h5 class="fw-bold text-dark mb-1">{{ insc.formation.titre }}</h5>
+                                            <p class="text-muted small mb-0"><i class="bi bi-building me-1"></i> {{
+                                                insc.formation.etablissement.nom }}</p>
+                                        </div>
+                                        <!-- Status Badge Logic -->
+                                        {% if insc.etat.name == 'ACCEPTE' %}
+                                        <span class="badge bg-success px-3 py-2 rounded-pill"><i
+                                                class="bi bi-check-circle me-1"></i> Admis</span>
+                                        {% elif insc.etat.name == 'REFUSE' %}
+                                        <span class="badge bg-danger px-3 py-2 rounded-pill"><i
+                                                class="bi bi-x-circle me-1"></i> Refusé</span>
+                                        {% elif insc.etat.name == 'DOSSIER_SOUMIS' %}
+                                        <span class="badge bg-info px-3 py-2 rounded-pill"><i
+                                                class="bi bi-file-earmark-check me-1"></i> Dossier Soumis</span>
+                                        {% elif insc.etat.name == 'PREINSCRIT' %}
+                                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i
+                                                class="bi bi-pencil me-1"></i> Pré-inscrit (Incomplet)</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary px-3 py-2 rounded-pill">{{ insc.etat.value
+                                            }}</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- Progress Bar (Visual) -->
+                                    <div class="mt-4 mb-3">
+                                        <div class="d-flex justify-content-between text-muted small mb-1 fw-bold">
+                                            <span>Pré-inscription</span>
+                                            <span>Dossier</span>
+                                            <span>Traitement</span>
+                                            <span>Décision</span>
+                                        </div>
+                                        <div class="progress" style="height: 6px;">
+                                            {% set progress = 25 %}
+                                            {% if insc.etat.name == 'DOSSIER_SOUMIS' %}{% set progress = 50 %}{% endif
+                                            %}
+                                            {% if insc.etat.name == 'EN_VALIDATION' %}{% set progress = 75 %}{% endif %}
+                                            {% if insc.etat.name == 'ACCEPTE' or insc.etat.name == 'REFUSE' or
+                                            insc.etat.name == 'INSCRIT' %}{% set progress = 100 %}{% endif %}
+
+                                            <div class="progress-bar {% if insc.etat.name == 'ACCEPTE' %}bg-success{% elif insc.etat.name == 'REFUSE' %}bg-danger{% else %}bg-primary{% endif %}"
+                                                role="progressbar" style="width: {{ progress }}%"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Action Footer -->
+                                    <div class="d-flex justify-content-end mt-3 border-top pt-3">
+                                        <small class="text-muted me-auto align-self-center"><i
+                                                class="bi bi-clock me-1"></i> Mis à jour le {{
+                                            insc.date_creation.strftime('%d/%m/%Y') }}</small>
+                                        {% if insc.etat.name == 'PREINSCRIT' %}
+                                        <a href="{{ url_for('inscriptions.mon_dossier', id=insc.id) }}"
+                                            class="btn btn-warning btn-sm fw-bold px-4">Compléter mon dossier <i
+                                                class="bi bi-arrow-right ms-1"></i></a>
+                                        {% else %}
+                                        <a href="{{ url_for('inscriptions.mon_dossier', id=insc.id) }}"
+                                            class="btn btn-outline-secondary btn-sm px-4">Voir les détails</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5 bg-white rounded shadow-sm border">
+                    <div class="mb-3">
+                        <i class="bi bi-clipboard-x text-muted" style="font-size: 4rem;"></i>
+                    </div>
+                    <h4 class="text-dark">Aucune candidature en cours</h4>
+                    <p class="text-muted mb-4">Explorez le catalogue pour trouver la formation qui vous correspond.</p>
+                    <a href="{{ url_for('main.catalogue') }}" class="btn btn-primary px-4 py-2">Voir le Catalogue</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .shadow-hover {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .shadow-hover:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+    }
+</style>
+{% endblock %}

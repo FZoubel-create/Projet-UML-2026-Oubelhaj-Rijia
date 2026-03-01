@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-dark text-white py-3">
+                    <h4 class="mb-0 fw-bold">Créer un Utilisateur</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Nom</label>
+                                <input type="text" name="nom" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Prénom</label>
+                                <input type="text" name="prenom" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Email Professionnel</label>
+                            <input type="email" name="email" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Mot de Passe Provisoire</label>
+                            <input type="password" name="password" class="form-control" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Rôle Système</label>
+                            <select name="role" id="roleSelect" class="form-select form-select-lg"
+                                onchange="toggleEtab()">
+                                {% for role in roles %}
+                                <option value="{{ role }}">{{ role }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text">Attention : Les privilèges seront appliqués immédiatement.</div>
+                        </div>
+
+                        <!-- Section Établissement (Conditionnelle) -->
+                        <div id="etabSection" class="mb-4 p-3 bg-light rounded border" style="display:none;">
+                            <label class="form-label fw-bold text-primary">Affectation Établissement</label>
+                            <select name="etablissement_id" class="form-select">
+                                <option value="">-- Choisir un Établissement --</option>
+                                {% for etab in etablissements %}
+                                <option value="{{ etab.id }}">{{ etab.code }} - {{ etab.nom }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text">Obligatoire pour les Admins d'Établissement.</div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{{ url_for('admin.manage_users') }}" class="btn btn-outline-secondary">Annuler</a>
+                            <button type="submit" class="btn btn-primary px-4">Créer l'Utilisateur</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleEtab() {
+        const role = document.getElementById('roleSelect').value;
+        const etabSection = document.getElementById('etabSection');
+
+        // Afficher si le rôle est ADMIN_ETABLISSEMENT
+        if (role === 'ADMIN_ETABLISSEMENT') {
+            etabSection.style.display = 'block';
+        } else {
+            etabSection.style.display = 'none';
+        }
+    }
+    // Run on load
+    document.addEventListener('DOMContentLoaded', toggleEtab);
+</script>
+{% endblock %}

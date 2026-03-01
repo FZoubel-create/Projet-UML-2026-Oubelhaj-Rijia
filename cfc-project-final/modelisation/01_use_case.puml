@@ -1,0 +1,87 @@
+@startuml UseCase_Global
+' --- Configuration Visualisation ---
+skinparam handwritten false
+skinparam packageStyle rectangle
+skinparam usecase {
+    BackgroundColor White
+    BorderColor #2C3E50
+    ArrowColor #2C3E50
+}
+skinparam actor {
+    BackgroundColor White
+    BorderColor #2C3E50
+}
+
+left to right direction
+
+' --- Acteurs ---
+actor "Candidat" as candy
+actor "Coordinateur" as coord
+actor "Admin Établis." as admin_etab
+actor "Super Admin" as super_admin
+actor "Système (Automate)" as system
+
+' --- Système ---
+package "Système de Gestion CFC" {
+
+    ' --- Gestion Globale ---
+    usecase "Gérer les Établissements" as UC_GererEtab
+    usecase "Gérer les Admins d'Étab." as UC_GererAdminEtab
+    usecase "Configurer Paramètres Globaux\n(Année Univ)" as UC_Config
+    usecase "Voir Reporting Global" as UC_Reporting
+
+    ' --- Gestion de l'Offre de Formation ---
+    usecase "CRUD Formations\n(Brouillon/Publié/Archivé)" as UC_CRUDForm
+    usecase "Définir Périodes Inscription\n(Ouv/Ferm)" as UC_Dates
+    
+    ' --- Processus d'Inscription ---
+    usecase "Consulter Catalogue" as UC_Consulter
+    usecase "Se Préinscrire" as UC_Preinscrire
+    usecase "Déposer/Compléter Dossier" as UC_Deposer
+    usecase "Valider / Refuser Dossier" as UC_Valider
+    usecase "Fermeture Auto des Inscriptions" as UC_FermetureAuto
+
+}
+
+' --- Relations Acteurs -> Cas d'Utilisation ---
+
+' Super Admin
+super_admin --> UC_GererEtab
+super_admin --> UC_GererAdminEtab
+super_admin --> UC_Config
+super_admin --> UC_Reporting
+
+' Admin Etablissement
+admin_etab --> UC_CRUDForm : "Pour son Etab."
+admin_etab --> UC_Valider : "Décision finale"
+admin_etab --|> coord : "Peut agir comme"
+
+' Coordinateur
+coord --> UC_Dates : "Ouvrir/Fermer"
+
+' Candidat
+candy --> UC_Consulter
+candy --> UC_Preinscrire : "Si ouverte & publiée"
+candy --> UC_Deposer
+
+' Système
+system --> UC_FermetureAuto : "Job Planifié"
+
+' --- Inclusions et Extensions Logiques ---
+UC_Preinscrire .> UC_Consulter : <<include>>
+UC_Deposer .> UC_Preinscrire : <<include>>
+UC_Valider .> UC_Deposer : <<access>>
+
+note right of UC_Preinscrire
+  Condition:
+  Formation Publiée
+  ET
+  Inscriptions Ouvertes
+end note
+
+note right of UC_FermetureAuto
+  Déclenché si
+  Date > Date Fin
+end note
+
+@enduml

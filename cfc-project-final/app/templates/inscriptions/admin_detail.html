@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Détail Candidature - {{ inscription.formation.titre }}</h2>
+    
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            Informations Candidat
+        </div>
+        <div class="card-body">
+            <p><strong>Nom :</strong> {{ inscription.candidat.nom }} {{ inscription.candidat.prenom }}</p>
+            <p><strong>Email :</strong> {{ inscription.candidat.email }}</p>
+            <p><strong>Date Candidature :</strong> {{ inscription.date_creation.strftime('%d/%m/%Y') }}</p>
+            <p><strong>Statut Actuel :</strong> <span class="badge badge-info">{{ inscription.etat.value }}</span></p>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">
+            Pièces du Dossier
+        </div>
+        <div class="card-body">
+            {% if inscription.dossier and inscription.dossier.cv_filename %}
+                <p>
+                    <strong>CV :</strong> 
+                    <a href="{{ url_for('static', filename='uploads/' + inscription.dossier.cv_filename) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                        Télécharger le CV
+                    </a>
+                </p>
+            {% else %}
+                <p class="text-danger">Aucun CV fourni (Dossier incomplet ??)</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-warning text-dark">
+            Décision
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('inscriptions.decision', id=inscription.id) }}" method="POST">
+                <p>En tant que responsable, vous certifiez avoir vérifié les pièces.</p>
+                <button type="submit" name="action" value="accept" class="btn btn-success btn-lg">Accepter</button>
+                <button type="submit" name="action" value="refuse" class="btn btn-danger btn-lg">Refuser</button>
+                <a href="{{ url_for('inscriptions.admin_dashboard') }}" class="btn btn-secondary btn-lg float-right">Retour</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

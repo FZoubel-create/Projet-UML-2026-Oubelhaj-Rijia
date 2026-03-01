@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CFC - USMS{% endblock %}</title>
+
+    <!-- Polices Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Notre CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- FontAwesome (Icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- Top Bar (Contact) -->
+    <div class="top-bar d-none d-lg-block">
+        <div class="container d-flex justify-content-between">
+            <div>
+                <i class="bi bi-mortarboard me-2"></i> Université Sultan Moulay Slimane
+            </div>
+            <div>
+                <a href="#"><i class="bi bi-envelope-fill me-1"></i> contact@cfc.usms.ac.ma</a>
+                <a href="#"><i class="bi bi-telephone-fill me-1"></i> +212 523 48 02 01</a>
+                <a href="#"><i class="bi bi-facebook"></i></a>
+                <a href="#"><i class="bi bi-linkedin"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">
+                <span style="color:var(--secondary-color)">CFC</span> USMS
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a href="{{ url_for('main.index') }}" class="nav-link">Accueil</a></li>
+                    <li class="nav-item"><a href="{{ url_for('main.etablissements') }}"
+                            class="nav-link">Établissements</a></li>
+                    <li class="nav-item"><a href="{{ url_for('main.catalogue') }}" class="nav-link">Formations</a></li>
+                    <li class="nav-item"><a href="{{ url_for('main.apropos') }}" class="nav-link">Université</a></li>
+                    <li class="nav-item"><a href="{{ url_for('main.contact') }}" class="nav-link">Contact</a></li>
+                    <li class="nav-item ms-lg-3">
+                        <a href="{{ url_for('main.catalogue') }}"
+                            class="btn btn-sm btn-light rounded-circle text-primary shadow-sm" title="Rechercher">
+                            <i class="bi bi-search"></i>
+                        </a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav ms-3">
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle btn btn-sm btn-outline-primary px-3 rounded-pill" href="#"
+                            role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle me-1"></i> {{ current_user.prenom }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                            {% if current_user.role.name == 'CANDIDAT' %}
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('inscriptions.dashboard') }}">
+                                    <i class="bi bi-speedometer2 me-2"></i>Tableau de Bord
+                                </a>
+                            </li>
+                            {% if current_user.mes_inscriptions %}
+                            {% set last_inscr = current_user.mes_inscriptions[-1] %}
+                            <li>
+                                <a class="dropdown-item"
+                                    href="{{ url_for('inscriptions.mon_dossier', id=last_inscr.id) }}">
+                                    Mon Dossier (Récent)
+                                </a>
+                            </li>
+                            {% endif %}
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            {% endif %}
+
+                            {% if current_user.role.name in ['SUPER_ADMIN', 'ADMIN_ETABLISSEMENT', 'COORDINATEUR'] %}
+                            <li><a class="dropdown-item" href="{{ url_for('admin.dashboard') }}">Mon Tableau de Bord</a>
+                            </li>
+                            {% endif %}
+
+                            <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">Déconnexion</a>
+                            </li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-cta btn-sm ms-2">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Espace Candidat
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm border-0" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Contenu Principal -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row gy-4">
+                <div class="col-lg-4 col-md-6">
+                    <h5>Université Sultan Moulay Slimane</h5>
+                    <p class="text-white-50">Excellence académique et innovation au service du développement régional et
+                        national.</p>
+                    <div class="mt-4">
+                        <img src="https://cfc.usms.ac.ma/public/images/logo_usms.png" alt="Logo USMS"
+                            style="height: 60px; filter: grayscale(100%) brightness(200%); opacity: 0.8;">
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5>Liens Rapides</h5>
+                    <a href="#">Catalogue</a>
+                    <a href="#">Espace étudiant</a>
+                    <a href="#">Presse</a>
+                    <a href="#">Recrutement</a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>Établissements</h5>
+                    <a href="#">FST Béni Mellal</a>
+                    <a href="#">ENCG Béni Mellal</a>
+                    <a href="#">EST Fkih Ben Salah</a>
+                    <a href="#">FLSH Béni Mellal</a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>Contact</h5>
+                    <p class="mb-2"><i class="bi bi-geo-alt me-2 text-warning"></i> Campus Universitaire Mghila, BP :
+                        591, Béni Mellal</p>
+                    <p class="mb-2"><i class="bi bi-envelope me-2 text-warning"></i> p-cfc@usms.ma</p>
+                    <p><i class="bi bi-telephone me-2 text-warning"></i> +212 5 23 48 02 01</p>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 text-md-start">
+                        &copy; 2026 Centre de Formation Continue - USMS.
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <a href="#" class="d-inline text-decoration-none mx-2">Mentions légales</a>
+                        <a href="#" class="d-inline text-decoration-none mx-2">Confidentialité</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

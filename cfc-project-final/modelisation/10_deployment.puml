@@ -1,0 +1,69 @@
+@startuml Component_Deployment
+skinparam component {
+    BackgroundColor White
+    BorderColor #2C3E50
+}
+skinparam database {
+    BackgroundColor White
+    BorderColor #2C3E50
+}
+skinparam node {
+    BackgroundColor #ECF0F1
+    BorderColor #2C3E50
+}
+
+title Diagramme de Déploiement & Composants
+
+' --- Nœud Client ---
+node "Poste Client (Utilisateur)" {
+    component "Navigateur Web" as Browser {
+        [HTML5 / CSS3 / JS]
+        [Interface Bootstrap/Tailwind]
+    }
+}
+
+' --- Nœud Serveur ---
+node "Serveur d'Application (Docker / VPS)" {
+    
+    component "Serveur Web (Nginx/Apache)" as ReverseProxy
+    
+    component "Backend Flask (Python)" as Backend {
+        [Module Auth (Security)]
+        [Module Formation]
+        [Module Inscription]
+        [API REST / Jinja2]
+        port "5000" as p5000
+    }
+    
+    component "Système de Fichiers" as FS {
+        folder "/uploads/dossiers"
+        folder "/static/assets"
+    }
+}
+
+' --- Nœud Données ---
+node "Serveur de Données" {
+    database "MySQL / PostgreSQL" as DB {
+        [Table Users]
+        [Table Formations]
+        [Table Inscriptions]
+    }
+}
+
+' --- Relations ---
+Browser -- ReverseProxy : HTTPS (443)
+ReverseProxy -- p5000 : HTTP Reverse Proxy
+Backend -- DB : SQL (3306) : SQLAlchemy
+Backend -- FS : Read/Write (IO)
+
+note right of Backend
+    Logique Métier
+    & Contrôleurs
+end note
+
+note right of FS
+    Stockage physique
+    des PDF/Justificatifs
+end note
+
+@enduml

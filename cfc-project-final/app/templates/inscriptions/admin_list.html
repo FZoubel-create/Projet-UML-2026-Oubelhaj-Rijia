@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Admin - Validation des Inscriptions</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Candidat</th>
+                <th>Formation</th>
+                <th>État</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in inscriptions %}
+            <tr>
+                <td>{{ i.candidat.nom }} {{ i.candidat.prenom }}</td>
+                <td>{{ i.formation.titre }}</td>
+                <td>{{ i.etat.value }}</td>
+                <td>
+                    {% if i.etat.value == 'DOSSIER_SOUMIS' or i.etat.value == 'En cours de validation' %}
+                    <a href="{{ url_for('inscriptions.review_dossier', id=i.id) }}" class="btn btn-primary btn-sm">
+                        Consulter / Valider
+                    </a>
+                    {% else %}
+                    <span class="text-muted text-success">Traité</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

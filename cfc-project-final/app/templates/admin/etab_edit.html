@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-warning text-dark py-3">
+                    <h4 class="mb-0 fw-bold">Modifier l'Établissement</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Code</label>
+                            <input type="text" name="code" class="form-control" value="{{ etablissement.code }}"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nom Complet</label>
+                            <input type="text" name="nom" class="form-control" value="{{ etablissement.nom }}" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Ville</label>
+                            <input type="text" name="ville" class="form-control" value="{{ etablissement.ville }}">
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('admin.manage_etablissements') }}"
+                                class="btn btn-outline-secondary">Annuler</a>
+                            <button type="submit" class="btn btn-primary px-4">Sauvegarder</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Contactez-nous</h2>
+            <p>Une question sur une formation ? Besoin d'assistance ? N'hésitez pas.</p>
+
+            <form>
+                <div class="mb-3">
+                    <label class="form-label">Votre Nom</label>
+                    <input type="text" class="form-control" placeholder="Jean Dupont">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Votre Email</label>
+                    <input type="email" class="form-control" placeholder="jean@example.com">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Sujet</label>
+                    <input type="text" class="form-control" placeholder="Renseignements...">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Message</label>
+                    <textarea class="form-control" rows="5"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Envoyer le message</button>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <div class="card bg-light p-4">
+                <h4>Nos Coordonnées</h4>
+                <ul class="list-unstyled mt-3">
+                    <li class="mb-2">📍 <strong>Adresse :</strong> Campus Universitaire Mghila, BP 591, Béni Mellal</li>
+                    <li class="mb-2">📞 <strong>Téléphone :</strong> +212 523 48 02 18</li>
+                    <li class="mb-2">📧 <strong>Email :</strong> cfc@usms.ma</li>
+                    <li class="mb-2">🕘 <strong>Horaires :</strong> Lun - Ven : 8h30 - 16h30</li>
+                </ul>
+                <div class="mt-4">
+                    <!-- Placeholder Map -->
+                    <div
+                        style="background: #e9ecef; height: 200px; display: flex; align-items: center; justify-content: center; color: #6c757d;">
+                        Carte Google Maps Intégrée
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,80 @@
+@startuml ClassDiagram_Security_RBAC
+skinparam class {
+    BackgroundColor White
+    ArrowColor #C0392B
+    BorderColor #C0392B
+}
+skinparam note {
+    BackgroundColor #FDEDEC
+    BorderColor #C0392B
+}
+
+title Diagramme de Classes : Sécurité & RBAC
+
+' --- Classes de Sécurité ---
+
+class Utilisateur {
+    + email : String
+    + passwordHash : String
+    + isEnabled : Boolean
+    + lastLogin : DateTime
+    + roles : Set<Role>
+    + hasPermission(p : Permission) : Boolean
+}
+
+enum Role {
+    SUPER_ADMIN
+    ADMIN_ETABLISSEMENT
+    COORDINATEUR
+    CANDIDAT
+}
+
+enum Permission {
+    ' Gestion Etablissement
+    ETABLISSEMENT_CREATE
+    ETABLISSEMENT_EDIT
+    ' Gestion Formation
+    FORMATION_CREATE
+    FORMATION_PUBLISH
+    FORMATION_ARCHIVE
+    ' Inscription
+    INSCRIPTION_CREATE
+    INSCRIPTION_VALIDATE
+    INSCRIPTION_VIEW_ALL
+}
+
+' --- Relations ---
+
+Utilisateur "1" *-- "1..*" Role : "possède >"
+Role "1" .. "1..*" Permission : "octroie >"
+
+' --- Matrice de Permissions (Explicite pour le Jury) ---
+
+note bottom of Role
+    **Attribution des Permissions :**
+    
+    1. SUPER_ADMIN : 
+       - ETABLISSEMENT_*, ADMIN_MANAGE
+       
+    2. ADMIN_ETABLISSEMENT :
+       - FORMATION_CREATE, FORMATION_PUBLISH
+       - INSCRIPTION_VALIDATE
+       
+    3. COORDINATEUR :
+       - FORMATION_VIEW_INTERNAL
+       - PERIODES_MANAGE
+       
+    4. CANDIDAT :
+       - INSCRIPTION_CREATE
+       - PROFILE_EDIT
+       - CATLOGUE_VIEW
+end note
+
+note right of Utilisateur
+    Sécurité implémentée via :
+    - Flask-Login (Session)
+    - Décorateurs @login_required
+    - Décorateurs @role_required('ADMIN')
+end note
+
+@enduml
